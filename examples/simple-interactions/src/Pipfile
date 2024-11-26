@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+airtop = "~=0.0.26"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
+
+[scripts]
+interaction_recipe = "python simple_interaction_recipe.py"
