@@ -1,8 +1,5 @@
 import os
-import time
-from selenium import webdriver
-from selenium.webdriver.chrome.remote_connection import ChromeRemoteConnection
-from airtop import Airtop
+from airtop import AsyncAirtop, SessionConfigV1
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,51 +14,37 @@ TARGET_URL = ""
 EXTRACT_DATA_PROMPT = "Summarize the content of this page in one paragraph."
 # Prompts used in the TARGET_URL
 
-def create_airtop_selenium_connection(
-    airtop_api_key, airtop_session_data, *args, **kwargs
-):
-    class AirtopRemoteConnection(ChromeRemoteConnection):
-        @classmethod
-        def get_remote_connection_headers(cls, *args, **kwargs):
-            # Call the original class method with any arguments passed
-            headers = super().get_remote_connection_headers(*args, **kwargs)
-            # Add the Authorization header with Bearer token
-            headers["Authorization"] = f"Bearer {airtop_api_key}"
-            return headers
-    return AirtopRemoteConnection(
-        remote_server_addr=airtop_session_data.chromedriver_url, *args, **kwargs
+try:
+    # Initialize AirTop client
+    client = AsyncAirtop(api_key=api_key)
+
+    # Create a session configuration
+    configuration = SessionConfigV1(
+        timeout_minutes=10,
     )
 
-# Initialize AirTop client
-client = Airtop(api_key=api_key)
+    # Create a session
+    session = await client.sessions.create(configuration=configuration)
+    if not session or hasattr(session, "errors") and session.errors:
+        raise Exception(f"Failed to create session: {session.errors}")
 
-# Start an Airtop browser session and wait for it to be ready.
-print("Starting Airtop session...")
-session = client.sessions.create()
-print(f"Airtop session ready. Session id: {session.data.id}")
+    session_id = session.data.id if session.data else None
+    
+    # Create a browser window
+    window = await client.windows.create(session_id, url=TARGET_URL)
+    if not window.data:
+        raise Exception("Failed to create window")
+        
+    # Get the window ID
+    window_id = window.data.window_id
 
-# Connect to the Airtop cloud browser with Selenium and navigate to a page.
-print("Starting Selenium...")
-browser = webdriver.Remote(
-    command_executor=create_airtop_selenium_connection(api_key, session.data),
-    options=webdriver.ChromeOptions(),
-)
-browser.get(TARGET_URL)
-time.sleep(2)
-
-window_info = client.windows.get_window_info_for_selenium_driver(
-    session.data,
-    browser,
-)
-
-current_content = client.windows.page_query(
-    session.data.id,
-    window_info.data.window_id,
-    prompt=EXTRACT_DATA_PROMPT,
-)
-current_result = current_content.data.model_response[:]
-print(current_result)
-browser.quit()
-# Terminate the Airtop session.
-print("Terminating Airtop session...")
-client.sessions.terminate(id=session.data.id)
+    current_content = client.windows.page_query(
+        session.data.id,
+        window_id,
+        prompt=EXTRACT_DATA_PROMPT,
+    )
+    current_result = current_content.data.model_response[:]
+    print(current_result)
+finally:
+    print("Terminating Airtop session...")
+    await client.sessions.terminate(id=session.data.id)
