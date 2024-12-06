@@ -2,7 +2,7 @@ EXTRACT_TABLE = "Create a table that extracts information about this webpage wit
 
 SUMMARY = "Summarize the content of this page in bullet points. Create the following sections: Content, Format, Links to other sites."
 
-SENTIMENT = "What is the sentiment described on this site? Does it mention [TARGET]? Is it positive or negative? Create a report with bullet points in markdown style with the following sections: Posiitve mentions, Neutral mentions, Negative mentions."
+SENTIMENT = "What is the sentiment described on this site? Does it mention [TARGET]? Is it positive or negative? Create a report with bullet points in markdown style with the following sections: Positive mentions, Neutral mentions, Negative mentions."
 
 NEWS = "What are the main topics in the news today? Summarize them in bullet points, with each topic in its section. Return a markdown style string"
 
