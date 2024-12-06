@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "summarize-example"
 version = "0.1.0"
-description = ""
+description = "Summarize recipe"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 

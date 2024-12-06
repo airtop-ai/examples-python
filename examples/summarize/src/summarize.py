@@ -1,5 +1,5 @@
 import os
-from airtop import AsyncAirtop, SessionConfigV1
+from airtop import Airtop, SessionConfigV1
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,13 +10,13 @@ if not api_key:
     print("Error: AIRTOP_API_KEY environment variable must be set.")
     exit(1)
 
-TARGET_URL = ""
+TARGET_URL = "www.nba.com"
 EXTRACT_DATA_PROMPT = "Summarize the content of this page in one paragraph."
 # Prompts used in the TARGET_URL
 
 try:
     # Initialize AirTop client
-    client = AsyncAirtop(api_key=api_key)
+    client = Airtop(api_key=api_key)
 
     # Create a session configuration
     configuration = SessionConfigV1(
@@ -24,14 +24,14 @@ try:
     )
 
     # Create a session
-    session = await client.sessions.create(configuration=configuration)
+    session = client.sessions.create(configuration=configuration)
     if not session or hasattr(session, "errors") and session.errors:
         raise Exception(f"Failed to create session: {session.errors}")
 
     session_id = session.data.id if session.data else None
     
     # Create a browser window
-    window = await client.windows.create(session_id, url=TARGET_URL)
+    window = client.windows.create(session_id, url=TARGET_URL)
     if not window.data:
         raise Exception("Failed to create window")
         
@@ -45,6 +45,8 @@ try:
     )
     current_result = current_content.data.model_response[:]
     print(current_result)
+except Exception as e:
+    print(e)
 finally:
     print("Terminating Airtop session...")
-    await client.sessions.terminate(id=session.data.id)
+    client.sessions.terminate(id=session.data.id)

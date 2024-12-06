@@ -25,3 +25,4 @@ Input your Airtop key in the .env file.
 
 Change the variable `TARGET_URL` to your desired target in summarize.py.
 
+`python summarize.py`
