@@ -1,3 +1,7 @@
+## Overview
+
+This example demonstrates how to use Airtop to automate the summarization of a webpage. By leveraging Airtop’s cloud browser capabilities, we can extract a concise summary from any webpage using a simple API.
+
 # Quick setup
 
 ## Prerequisites
