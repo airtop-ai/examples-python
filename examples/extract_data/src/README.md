@@ -28,3 +28,5 @@ Initiate the environment
 Input your Airtop key in the .env file.
 
 Change the variable `TARGET_URL` to your desired target in `extract_data_login.py`.
+
+`python extract_data_login.py`
