@@ -6,7 +6,7 @@ SENTIMENT = "What is the sentiment described on this site? Does it mention [TARG
 
 NEWS = "What are the main topics in the news today? Summarize them in bullet points, with each topic in its section. Return a markdown style string"
 
-TWEETS = "Consider these social media mentions. Do they mention [TARGET]? Are they positive or negative? Create a report with bullet points in markdown style with the following sections: Posiitve mentions, Neutral mentions, Negative mentions."
+TWEETS = "Consider these social media mentions. Do they mention [TARGET]? Are they positive or negative? Create a report with bullet points in markdown style with the following sections: Positive mentions, Neutral mentions, Negative mentions."
 
 YOUTUBE = "Consider the titles for YouTube videos on this page. What are the main topics that this content creator explores? What are the videos with the most views? Create a markdown style report and return it as a string."
 
