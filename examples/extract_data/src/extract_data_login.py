@@ -6,7 +6,7 @@ load_dotenv()
 
 # Setup environment variables
 api_key = os.getenv("AIRTOP_API_KEY")
-profile_id = os.getenv("profile_id")
+profile_id = os.getenv("PROFILE_ID")
 
 if not api_key:
     print("Error: AIRTOP_API_KEY environment variable must be set.")
