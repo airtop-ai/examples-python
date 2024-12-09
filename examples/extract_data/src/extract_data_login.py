@@ -127,7 +127,7 @@ async def run():
         print("Response:\n\n", formatted_json)
 
     except Exception as e:
-        print(e)
+        print(e.status_code, e.message, e.body)
     
     finally:
         # Clean up
