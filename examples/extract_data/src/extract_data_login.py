@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-from airtop import Airtop
+from airtop import Airtop, SessionConfigV1, PageQueryConfig
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -70,67 +70,66 @@ async def run():
             print("No profileId provided")
             profile_id = None
 
-        create_session_response = await client.sessions.create({
-            "configuration": {
-                "timeoutMinutes": 10,
-                "persistProfile": not profile_id,
-                "baseProfileId": profile_id,
-            }
-        })
+        print("Creating sessions")
+        configuration = SessionConfigV1(
+            timeout_minutes=10,
+            persist_profile=not profile_id,
+            base_profile_id=profile_id
+        )
+        session = client.sessions.create(configuration=configuration)
 
-        session = create_session_response["data"]
-        print("Created airtop session", session["id"])
-
-        if not session.get("cdpWsUrl"):
-            raise ValueError("Unable to get cdp url")
+        session_id = session.data.id if session.data else None
+        print("Created airtop session", session_id)
 
         # Create a new window and navigate to the URL
-        window_response = await client.windows.create(session["id"], {"url": LOGIN_URL})
-        window_info = await client.windows.get_window_info(session["id"], window_response["data"]["windowId"])
+        window = client.windows.create(session_id, url=LOGIN_URL)
+        window_info = client.windows.get_window_info(session_id, window.data.window_id)
 
         # Check whether the user is logged in
         print("Determining whether the user is logged in...")
-        is_logged_in_response = await client.windows.page_query(
-            session["id"], window_info["data"]["windowId"], {
-                "prompt": IS_LOGGED_IN_PROMPT,
-                "configuration": {"outputSchema": IS_LOGGED_IN_OUTPUT_SCHEMA},
-            }
+        logged_in_schema = IS_LOGGED_IN_OUTPUT_SCHEMA
+        is_logged_in_response = client.windows.page_query(
+            session_id, window.data.window_id, prompt=IS_LOGGED_IN_PROMPT, configuration=PageQueryConfig(
+                output_schema=logged_in_schema
+            )
         )
-        parsed_response = json.loads(is_logged_in_response["data"]["modelResponse"])
+        print("Response if user is logged in")
+        parsed_response = json.loads(is_logged_in_response.data.model_response)
         if "error" in parsed_response:
-            raise ValueError(parsed_response["error"])
+            raise ValueError(parsed_response.error)
         is_user_logged_in = parsed_response["isLoggedIn"]
 
         # Prompt the user to log in if not already logged in
         if not is_user_logged_in:
-            print(f"Log into your Glassdoor account. Press Enter once done. Live view URL: {window_info['data']['liveViewUrl']}")
+            print(f"Log into your Glassdoor account. Press Enter once done. Live view URL: {window_info.data.live_view_url}")
             input()
-            print(f"To avoid logging in again, use the profileId next time: {session['profileId']}")
+            print(f"To avoid logging in again, use the profileId next time: {session.data.profile_id}")
         else:
-            print(f"User is already logged in. Live view URL: {window_info['data']['liveViewUrl']}")
+            print(f"User is already logged in. Live view URL: {window_info.data.live_view_url}")
 
         # Navigate to the target URL
         print("Navigating to target URL...")
-        await client.windows.load_url(session["id"], window_info["data"]["windowId"], {"url": TARGET_URL})
+        client.windows.load_url(session_id, window.data.window_id, url=TARGET_URL)
         print("Prompting the AI agent, waiting for a response...")
 
-        extract_data_response = await client.windows.page_query(
-            session["id"], window_info["data"]["windowId"], {
-                "prompt": EXTRACT_DATA_PROMPT,
-                "followPaginationLinks": True,
-                "configuration": {"outputSchema": EXTRACT_DATA_OUTPUT_SCHEMA},
-            }
+        extract_data_response = client.windows.page_query(
+            session_id, window.data.window_id,
+                prompt=EXTRACT_DATA_PROMPT,
+                configuration=PageQueryConfig(
+                output_schema=EXTRACT_DATA_OUTPUT_SCHEMA
+            )
         )
-        formatted_json = json.dumps(json.loads(extract_data_response["data"]["modelResponse"]), indent=2)
+        formatted_json = json.dumps(json.loads(extract_data_response.data.model_response), indent=2)
         print("Response:\n\n", formatted_json)
 
-        # Clean up
-        await client.windows.close(session["id"], window_info["data"]["windowId"])
-        await client.sessions.terminate(session["id"])
-        print("Session terminated")
-
     except Exception as e:
-        print(e.status_code, e.message, e.body)
+        print(e)
+    
+    finally:
+        # Clean up
+        client.windows.close(session_id, window.data.window_id)
+        client.sessions.terminate(session_id)
+        print("Session terminated")
 
 if __name__ == "__main__":
     asyncio.run(run())
