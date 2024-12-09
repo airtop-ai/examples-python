@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.32.3"
-airtop = "^0.0.24"
+airtop = "^0.0.26"
 python-dotenv = "^1.0.1"
 
 
