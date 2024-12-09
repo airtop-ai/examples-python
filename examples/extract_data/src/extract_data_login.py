@@ -59,7 +59,7 @@ EXTRACT_DATA_OUTPUT_SCHEMA = {
 async def run():
     client = None 
     session_id = None
-    window=None
+
     try:
         if not AIRTOP_API_KEY:
             raise ValueError("AIRTOP_API_KEY is not set")
@@ -137,7 +137,7 @@ async def run():
     
     finally:
         # Clean up
-        if client is not None and session_id is not None and window is not None:
+        if client is not None and session_id is not None:
             client.windows.close(session_id, window.data.window_id)
             client.sessions.terminate(session_id)
             print("Session terminated")
