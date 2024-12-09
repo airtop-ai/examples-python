@@ -70,9 +70,6 @@ async def run():
             print("No profileId provided")
             profile_id = None
 
-        if not session.data.cdp_ws_url:
-            raise ValueError("Unable to get cdp url")
-
         print("Creating sessions")
         configuration = SessionConfigV1(
             timeout_minutes=10,
@@ -80,6 +77,10 @@ async def run():
             base_profile_id=profile_id
         )
         session = client.sessions.create(configuration=configuration)
+
+        if not session.data.cdp_ws_url:
+            raise ValueError("Unable to get cdp url")
+
 
         session_id = session.data.id if session.data else None
         print("Created airtop session", session_id)
