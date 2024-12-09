@@ -127,11 +127,14 @@ async def run():
         print("Response:\n\n", formatted_json)
 
     except Exception as e:
-        print(e.status_code, e.message, e.body)
+        try:
+            print(e.status_code, e.message, e.body)
+        except:
+            print(e)
     
     finally:
         # Clean up
-        if client is not None and session_id is not None:
+        if client is not None and session_id is not None and window is not None:
             client.windows.close(session_id, window.data.window_id)
             client.sessions.terminate(session_id)
             print("Session terminated")
