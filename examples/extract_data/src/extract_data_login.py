@@ -138,7 +138,8 @@ async def run():
     finally:
         # Clean up
         if client is not None and session_id is not None:
-            client.windows.close(session_id, window.data.window_id)
+            if window is not None and window.data is not None and window.data.window_id is not None:
+                client.windows.close(session_id, window.data.window_id)
             client.sessions.terminate(session_id)
             print("Session terminated")
 
