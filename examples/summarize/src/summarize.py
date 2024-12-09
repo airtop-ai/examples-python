@@ -10,7 +10,7 @@ if not api_key:
     print("Error: AIRTOP_API_KEY environment variable must be set.")
     exit(1)
 
-TARGET_URL = "https://www.nba.com"
+TARGET_URL = "https://en.wikipedia.org/wiki/A.I._Artificial_Intelligence"
 EXTRACT_DATA_PROMPT = "Summarize the content of this page in one paragraph."
 # Prompts used in the TARGET_URL
 
