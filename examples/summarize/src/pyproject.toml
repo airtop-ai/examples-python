@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "summarize-example"
+version = "0.1.0"
+description = "Summarize recipe"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+airtop = "^0.0.26"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
