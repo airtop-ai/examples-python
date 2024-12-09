@@ -131,9 +131,10 @@ async def run():
     
     finally:
         # Clean up
-        client.windows.close(session_id, window.data.window_id)
-        client.sessions.terminate(session_id)
-        print("Session terminated")
+        if client is not None and session_id is not None:
+            client.windows.close(session_id, window.data.window_id)
+            client.sessions.terminate(session_id)
+            print("Session terminated")
 
 if __name__ == "__main__":
     asyncio.run(run())
