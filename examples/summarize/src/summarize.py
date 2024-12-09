@@ -48,5 +48,4 @@ try:
 except Exception as e:
     print(e)
 finally:
-    print("Terminating Airtop session...")
     client.sessions.terminate(id=session.data.id)
