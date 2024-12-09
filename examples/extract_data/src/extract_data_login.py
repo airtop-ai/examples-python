@@ -70,6 +70,9 @@ async def run():
             print("No profileId provided")
             profile_id = None
 
+        if not session.data.cdp_ws_url:
+            raise ValueError("Unable to get cdp url")
+
         print("Creating sessions")
         configuration = SessionConfigV1(
             timeout_minutes=10,
