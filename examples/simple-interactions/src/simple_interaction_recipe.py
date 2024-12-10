@@ -7,26 +7,26 @@ ANIMATION_DELAY = 3
 STOCK_PERFORMANCE_PROMPT = "This page shows the stock performance for Nvidia. What is the price performance of NVDA over the past 6 months?"
 
 STOCK_PERFORMANCE_OUTPUT_SCHEMA = {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "properties": {
-    "analysis": {
-      "type": "string",
-      "description": f"A one sentence analysis of the price performance of NVDA over the past 6 months.",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "analysis": {
+            "type": "string",
+            "description": f"A one sentence analysis of the price performance of NVDA over the past 6 months.",
+        },
+        "percentChange": {
+            "type": "number",
+            "description": f"The percentage change in the price of NVDA over the past 6 months.",
+        },
+        "error": {
+            "type": "string",
+            "description": "If you cannot fulfill the request, use this field to report the problem.",
+        },
     },
-    "percentChange": {
-      "type": "number",
-      "description": f"The percentage change in the price of NVDA over the past 6 months.",
-    },
-    "error": {
-      "type": "string",
-      "description": "If you cannot fulfill the request, use this field to report the problem.",
-    },
-  },
-};
+}
 
 # Setup environment variables
-api_key = os.getenv('AIRTOP_API_KEY')
+api_key = os.getenv("AIRTOP_API_KEY")
 if not api_key:
     print("Error: AIRTOP_API_KEY environment variable must be set.")
     exit(1)
@@ -59,7 +59,7 @@ try:
         window_id=window_id,
         element_description="The search box",
         text="NVDA",
-        press_enter_key=True
+        press_enter_key=True,
     )
 
     time.sleep(ANIMATION_DELAY)  # Animation delay
@@ -69,9 +69,9 @@ try:
     client.windows.click(
         session_id=session.data.id,
         window_id=window_id,
-        element_description="The '6M' button at the top of the chart"
+        element_description="The '6M' button at the top of the chart",
     )
-    
+
     time.sleep(ANIMATION_DELAY)  # Animation delay
 
     # Query the page about NVDA performance
@@ -80,7 +80,7 @@ try:
         session_id=session.data.id,
         window_id=window_id,
         prompt=STOCK_PERFORMANCE_PROMPT,
-        configuration=PageQueryConfig(output_schema=STOCK_PERFORMANCE_OUTPUT_SCHEMA)
+        configuration=PageQueryConfig(output_schema=STOCK_PERFORMANCE_OUTPUT_SCHEMA),
     )
     print(result.data.model_response)
 
@@ -88,4 +88,3 @@ finally:
     # Terminate the Airtop session.
     print("Terminating Airtop session...")
     client.sessions.terminate(id=session.data.id)
-
