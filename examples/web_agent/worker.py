@@ -1,6 +1,5 @@
 import os
 import json
-import asyncio
 from airtop import Airtop, SessionConfigV1, PageQueryConfig
 from dotenv import load_dotenv
 
@@ -71,7 +70,7 @@ EXTRACT_DATA_OUTPUT_SCHEMA = {
 }
 
 
-async def run():
+def run():
     client = None
     session_id = None
 
@@ -201,4 +200,4 @@ async def run():
 
 
 if __name__ == "__main__":
-    asyncio.run(run())
+    run()

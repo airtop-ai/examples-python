@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "airtop-webagent"
 version = "0.1.0"
-description = ""
+description = "Web agent module that runs a prompt on a target URL and then stores the result in a local database"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 
