@@ -124,7 +124,7 @@ async def run():
         # Prompt the user to log in if not already logged in
         if not is_user_logged_in:
             print(
-                f"Log into your Glassdoor account. Press Enter once done. Live view URL: {window_info.data.live_view_url}"
+                f"Log into your Glassdoor account on the live view of your browser window.  Press `Enter` once you have logged in. Live view URL: {window_info.data.live_view_url}"
             )
             input()
             print(
