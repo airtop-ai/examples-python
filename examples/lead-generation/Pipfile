@@ -8,6 +8,8 @@ langgraph = "*"
 langsmith = "*"
 langchain-anthropic = "*"
 python-dotenv = "*"
+airtop="*"
+pydantic-settings = "*"
 
 [dev-packages]
 

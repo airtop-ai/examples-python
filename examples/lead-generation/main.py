@@ -1,9 +1,13 @@
-# Read env variables
-import os
-from dotenv import load_dotenv
+from nodes.url_list_input.url_list_input_node import get_url_list_input
+from env_config import env_config
+from nodes.url_validator.url_validator_node import validate_url
 
-load_dotenv()
 
-test = os.getenv("LANGCHAIN_API_KEY")
-print("LALA")
-print(test)
+urls = get_url_list_input()
+
+print(urls)
+print(env_config.AIRTOP_API_KEY)
+
+result = validate_url(urls[0])
+print("OUTPUT FROM VALIDATION", result)
+
