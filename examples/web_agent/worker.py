@@ -1,103 +1,203 @@
 import os
-import time
-from selenium import webdriver
-from selenium.webdriver.chrome.remote_connection import ChromeRemoteConnection
-from airtop import Airtop
-from prompt_templates import comparison_prompt
+import json
+import asyncio
+from airtop import Airtop, SessionConfigV1, PageQueryConfig
 from dotenv import load_dotenv
 
+from prompt_templates import comparison_prompt
 from utils import (
-    find_workers, 
-    create_worker, 
-    retrieve_previous_result, 
+    find_workers,
+    create_worker,
+    retrieve_previous_result,
     insert_result,
     insert_comparison,
+)
+from connect_database import (
+    sql_statements,
+    insert_tables,
+    dataframe_from_query_dev,
 )
 
 load_dotenv()
 
-# Setup environment variables
-api_key = os.getenv("AIRTOP_API_KEY")
-if not api_key:
-    print("Error: AIRTOP_API_KEY environment variable must be set.")
-    exit(1)
+AIRTOP_API_KEY = os.getenv("AIRTOP_API_KEY")
+LOGIN_URL = "https://www.glassdoor.com/member/profile"
+IS_LOGGED_IN_PROMPT = "This browser is open to a page that either display's a user's Glassdoor profile or prompts the user to login.  Please give me a JSON response matching the schema below."
+IS_LOGGED_IN_OUTPUT_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "isLoggedIn": {
+            "type": "boolean",
+            "description": "Use this field to indicate whether the user is logged in.",
+        },
+        "error": {
+            "type": "string",
+            "description": "If you cannot fulfill the request, use this field to report the problem.",
+        },
+    },
+}
+TARGET_URL = "https://www.glassdoor.com/Job/san-francisco-ca-software-engineer-jobs-SRCH_IL.0,16_IC1147401_KO17,34.htm"
+EXTRACT_DATA_PROMPT = "This browser is open to a page that lists available job roles for software engineers in San Francisco. Please provide 10 job roles that appear to be posted by the AI-related companies."
+EXTRACT_DATA_OUTPUT_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "companies": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "companyName": {"type": "string"},
+                    "jobTitle": {"type": "string"},
+                    "location": {"type": "string"},
+                    "salary": {
+                        "type": "object",
+                        "properties": {
+                            "min": {"type": "number", "minimum": 0},
+                            "max": {"type": "number", "minimum": 0},
+                        },
+                        "required": ["min", "max"],
+                    },
+                },
+                "required": ["companyName", "jobTitle", "location", "salary"],
+            },
+        },
+        "error": {
+            "type": "string",
+            "description": "If you cannot fulfill the request, use this field to report the problem.",
+        },
+    },
+}
 
-requires_login = os.getenv("requires_login")
-TARGET_URL = os.getenv("TARGET_URL")
-EXTRACT_DATA_PROMPT = os.getenv("EXTRACT_DATA_PROMPT")
-# Prompts used in the TARGET_URL
 
-def create_airtop_selenium_connection(
-    airtop_api_key, airtop_session_data, *args, **kwargs
-):
-    class AirtopRemoteConnection(ChromeRemoteConnection):
-        @classmethod
-        def get_remote_connection_headers(cls, *args, **kwargs):
-            # Call the original class method with any arguments passed
-            headers = super().get_remote_connection_headers(*args, **kwargs)
-            # Add the Authorization header with Bearer token
-            headers["Authorization"] = f"Bearer {airtop_api_key}"
-            return headers
-    return AirtopRemoteConnection(
-        remote_server_addr=airtop_session_data.chromedriver_url, *args, **kwargs
-    )
+async def run():
+    client = None
+    session_id = None
 
-# Initialize AirTop client
-client = Airtop(api_key=api_key)
+    try:
+        if not AIRTOP_API_KEY:
+            raise ValueError("AIRTOP_API_KEY is not set")
 
-# Start an Airtop browser session and wait for it to be ready.
-print("Starting Airtop session...")
-session = client.sessions.create()
-print(f"Airtop session ready. Session id: {session.data.id}")
+        client = Airtop(api_key=AIRTOP_API_KEY)
 
-# Connect to the Airtop cloud browser with Selenium and navigate to a page.
-print("Starting Selenium...")
-browser = webdriver.Remote(
-    command_executor=create_airtop_selenium_connection(api_key, session.data),
-    options=webdriver.ChromeOptions(),
-)
-browser.get(TARGET_URL)
-time.sleep(2)
+        profile_id = input("Enter a profileId (or press Enter to skip): ").strip()
+        if profile_id:
+            print(f"Using profileId: {profile_id}")
+        else:
+            print("No profileId provided")
+            profile_id = None
 
-window_info = client.windows.get_window_info_for_selenium_driver(
-    session.data,
-    browser,
-)
+        print("Creating sessions")
+        configuration = SessionConfigV1(
+            timeout_minutes=10,
+            persist_profile=not profile_id,
+            base_profile_id=profile_id,
+        )
+        session = client.sessions.create(configuration=configuration)
 
-# How to get window_id? The doc from our site is not clear
-# window_info = client.windows.get_window_info(session.data.id, window_id)
-if requires_login == "True":
-    print(
-        f"Please log in to the service before continuing using this link:\n\n {window_info.data.live_view_url}"
-    )
-    input("Press any key to continue")
-workers = find_workers(TARGET_URL, EXTRACT_DATA_PROMPT)
+        if not session.data.cdp_ws_url:
+            raise ValueError("Unable to get cdp url")
 
-# RETRIEVE DATA FROM USER IN THE DB TO THAT TARGET URL
-current_content = client.windows.page_query(
-    session.data.id,
-    window_info.data.window_id,
-    prompt=EXTRACT_DATA_PROMPT,
-)
-current_result = current_content.data.model_response[:]
+        session_id = session.data.id if session.data else None
+        print("Created airtop session", session_id)
 
-if not workers:
-    create_worker([(TARGET_URL, EXTRACT_DATA_PROMPT)])
-    print("This is the result of running the prompt on the page \n\n")
-    print(current_result)
+        # Create a new window and navigate to the URL
+        window = client.windows.create(session_id, url=LOGIN_URL)
+        window_info = client.windows.get_window_info(session_id, window.data.window_id)
 
-old_content = retrieve_previous_result(TARGET_URL, EXTRACT_DATA_PROMPT)
-if old_content:
-    promptContentResponse = client.windows.page_query(
-        session.data.id,
-        window_info.data.window_id,
-        prompt=comparison_prompt(old_content, current_result),
-    )
-    insert_comparison(TARGET_URL, EXTRACT_DATA_PROMPT, promptContentResponse.data.model_response)
+        # Check whether the user is logged in
+        print("Determining whether the user is logged in...")
+        logged_in_schema = IS_LOGGED_IN_OUTPUT_SCHEMA
+        is_logged_in_response = client.windows.page_query(
+            session_id,
+            window.data.window_id,
+            prompt=IS_LOGGED_IN_PROMPT,
+            configuration=PageQueryConfig(output_schema=logged_in_schema),
+        )
+        print("Response if user is logged in")
+        parsed_response = json.loads(is_logged_in_response.data.model_response)
+        if "error" in parsed_response:
+            raise ValueError(parsed_response.error)
+        is_user_logged_in = parsed_response["isLoggedIn"]
 
-insert_result(TARGET_URL, EXTRACT_DATA_PROMPT, current_result)
+        # Prompt the user to log in if not already logged in
+        if not is_user_logged_in:
+            print(
+                f"Log into your Glassdoor account. Press Enter once done. Live view URL: {window_info.data.live_view_url}"
+            )
+            input()
+            print(
+                f"To avoid logging in again, use the profileId next time: {session.data.profile_id}"
+            )
+        else:
+            print(
+                f"User is already logged in. Live view URL: {window_info.data.live_view_url}"
+            )
 
-browser.quit()
-# Terminate the Airtop session.
-print("Terminating Airtop session...")
-client.sessions.terminate(id=session.data.id)
+        # Navigate to the target URL
+        print("Navigating to target URL...")
+        client.windows.load_url(session_id, window.data.window_id, url=TARGET_URL)
+        print("Prompting the AI agent, waiting for a response...")
+
+        extract_data_response = client.windows.page_query(
+            session_id,
+            window.data.window_id,
+            prompt=EXTRACT_DATA_PROMPT,
+            configuration=PageQueryConfig(output_schema=EXTRACT_DATA_OUTPUT_SCHEMA),
+        )
+        formatted_json = json.dumps(
+            json.loads(extract_data_response.data.model_response), indent=2
+        )
+
+        # check if db exists, if not then it'll be created
+        try:
+            print("Existing workers")
+            print(dataframe_from_query_dev("SELECT * from workers limit 5"))
+        except:
+            for statement in sql_statements:
+                insert_tables(statement)
+
+        workers = find_workers(TARGET_URL, EXTRACT_DATA_PROMPT)
+        if not workers:
+            create_worker([(TARGET_URL, EXTRACT_DATA_PROMPT)])
+        print("Response:\n\n", formatted_json)
+
+        old_content = retrieve_previous_result(TARGET_URL, EXTRACT_DATA_PROMPT)
+        if old_content:
+            promptContentResponse = client.windows.page_query(
+                session.data.id,
+                window_info.data.window_id,
+                prompt=comparison_prompt(old_content, formatted_json),
+            )
+            print("Comparison result: ")
+            print(promptContentResponse.data.model_response)
+            insert_comparison(
+                TARGET_URL,
+                EXTRACT_DATA_PROMPT,
+                promptContentResponse.data.model_response,
+            )
+
+        insert_result(TARGET_URL, EXTRACT_DATA_PROMPT, formatted_json)
+
+    except Exception as e:
+        try:
+            print(e.status_code, e.message, e.body)
+        except:
+            print(e)
+
+    finally:
+        # Clean up
+        if client is not None and session_id is not None:
+            if (
+                window is not None
+                and window.data is not None
+                and window.data.window_id is not None
+            ):
+                client.windows.close(session_id, window.data.window_id)
+            client.sessions.terminate(session_id)
+            print("Session terminated")
+
+
+if __name__ == "__main__":
+    asyncio.run(run())
