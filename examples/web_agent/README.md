@@ -8,7 +8,7 @@ This is an agent that uses python to connect to Airtop, create sessions, execute
 - poetry==1.8.4
 - poetry-core==1.9.1
 
-To install, just run the following after downloanding the code
+To install, just run the following command after downloading the code
 
 `poetry install`
 
