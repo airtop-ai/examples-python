@@ -7,12 +7,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-selenium = "^4.26.1"
 requests = "^2.32.3"
-airtop = "^0.0.24"
+airtop = "^0.0.26"
 python-dotenv = "^1.0.1"
 pandas = "^2.2.3"
 sqlalchemy = "^2.0.36"
+openpyxl = "^3.1.5"
 
 
 [build-system]

@@ -40,3 +40,9 @@ It's possible to schedule a worker to run regularly. For that it's suggested to 
 To run the worker it's necessary to do
 
 `python worker.py`
+
+## 1.3 CHECK RESULTS STORED IN THE DB
+
+To get details from the DB on all previous runs, run the following command:
+
+`python utils.py`

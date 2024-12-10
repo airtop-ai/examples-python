@@ -85,12 +85,11 @@ def insert_comparison(TARGET_URL: str, prompt: str, result: str):
 
 
 if __name__ == "__main__":
-    TARGET_URL = "https://www.glassdoor.com/Job/san-francisco-ca-software-engineer-jobs-SRCH_IL.0,16_IC1147401_KO17,34.htm"
-    EXTRACT_DATA_PROMPT = "This browser is open to a page that lists available job roles for software engineers in San Francisco. Please provide 10 job roles that appear to be posted by the AI-related companies."
+    from worker import TARGET_URL, EXTRACT_DATA_PROMPT
 
     print("These are the available workers")
     print(describe_workers())
     print(50 * "*")
-    print("This is the history of results in the db")
-    print(retrieve_history(TARGET_URL, EXTRACT_DATA_PROMPT))
-    print(50 * "*")
+    print("The history of results will be saved as results_webagent.xlsx")
+    df = pd.DataFrame(retrieve_history(TARGET_URL, EXTRACT_DATA_PROMPT))
+    df.to_excel("results_webagent.xlsx", index=False)

@@ -165,17 +165,18 @@ async def run():
 
         old_content = retrieve_previous_result(TARGET_URL, EXTRACT_DATA_PROMPT)
         if old_content:
-            promptContentResponse = client.windows.page_query(
+            print("Running comparison. Result might take few minutes.")
+            prompt_content_response = client.windows.page_query(
                 session.data.id,
                 window_info.data.window_id,
                 prompt=comparison_prompt(old_content, formatted_json),
             )
             print("Comparison result: ")
-            print(promptContentResponse.data.model_response)
+            print(prompt_content_response.data.model_response)
             insert_comparison(
                 TARGET_URL,
                 EXTRACT_DATA_PROMPT,
-                promptContentResponse.data.model_response,
+                prompt_content_response.data.model_response,
             )
 
         insert_result(TARGET_URL, EXTRACT_DATA_PROMPT, formatted_json)
