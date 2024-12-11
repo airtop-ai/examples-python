@@ -37,7 +37,7 @@ In the file utils.py there are methods available to do the following operations:
 
 It's possible to schedule a worker to run regularly. For that it's suggested to create a cron job or some other similar program that is able to run worker.py with the desired recurrence.
 
-To run the worker it's necessary to do
+To run the worker it's necessary run the command
 
 `python worker.py`
 
