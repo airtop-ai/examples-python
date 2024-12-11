@@ -1,4 +1,4 @@
-# How to run automatically the worker script
+# How to schedule the worker script
 
 In case the site you're acessing requires login, we suggest you hardcode the profile_id in the worker so it runs automatically.
 Just edit this line in worker.py
@@ -27,6 +27,6 @@ https://learn.microsoft.com/en-us/windows/win32/taskschd/daily-trigger-example--
 
 # Supervisord
 
-You can use supervisord to setup the automation of your task
+You can also use supervisord as a task scheduler
 
 http://supervisord.org/running.html
