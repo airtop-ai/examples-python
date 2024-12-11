@@ -17,7 +17,7 @@ Example of how to make the worker run every day
 
 Full documentation
 
-https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules?hl=pt-br
+https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules
 
 # Task Scheduler (Windows)
 
