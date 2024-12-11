@@ -1,7 +1,7 @@
 # How to run automatically the worker script
 
 In case the site you're acessing requires login, we suggest you hardcode the profile_id in the worker so it runs automatically.
-Just edit this line in worlker.py
+Just edit this line in worker.py
 
 `profile_id = input("Enter a profileId (or press Enter to skip): ").strip()`
 
