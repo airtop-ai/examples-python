@@ -1,5 +1,3 @@
-# This file contains examples of prompts to be used
-
 def comparison_prompt(old_content: str, new_content: str):
     """
     Function that returns a prompt which compares between the current version

@@ -18,7 +18,7 @@ These are the steps necessary to run the code:
 
 The worker.py is the core script of this agent.
 It does the following in order:
-- It starts a session. It's necessary to supply your own AIRTOP_API_KEY in the worker.py script;
+- It starts a session. It's necessary to supply your own AIRTOP_API_KEY in the worker.py script. You can get one [here](https://portal.airtop.ai/api-keys) (sign-up required);
 - It accesses the target site, defined in TARGET_URL in the worker.py script;
 - It uses a prompt defined in the worker.py script to extract information from the site and requests login if needed;
 - If it's the first time, the db and the worker are created and the result of running the prompt on the site is exhibited;
