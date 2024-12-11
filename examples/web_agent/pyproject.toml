@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "airtop-webagent"
+version = "0.1.0"
+description = "Web agent module that runs a prompt on a target URL and then stores the result in a local database"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+airtop = "^0.0.26"
+python-dotenv = "^1.0.1"
+pandas = "^2.2.3"
+sqlalchemy = "^2.0.36"
+openpyxl = "^3.1.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
