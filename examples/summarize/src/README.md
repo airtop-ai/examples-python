@@ -11,7 +11,9 @@ This example demonstrates how to use Airtop to automate the summarization of a w
 
 ## Setup environment
 
-Clone the repository and navigate to this example
+Install python 3.10 and pip if you haven't already.
+
+Clone the repository and navigate to this example directory:
 
 `cd examples/summarize/src`
 
@@ -23,10 +25,18 @@ Initiate the environment
 
 `poetry shell`
 
+Copy the `.env.example` file to .env:
+
+`cp .env.example .env`
+
+An API key is required to use this example. You can get one [here](https://portal.airtop.ai/api-keys). A sign-up is required.
+
+Once you have an API key, set it in the .env file.
+
 ## Run the example
 
-Input your Airtop key in the .env file.
-
 Change the variable `TARGET_URL` to your desired target in summarize.py.
+
+To run the recipe in the command line:
 
 `python summarize.py`
