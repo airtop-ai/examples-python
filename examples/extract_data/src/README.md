@@ -7,6 +7,7 @@ This example demonstrates how to use Airtop to extract data from a website using
 ## Prerequisites
 
 - Python 3.10
+- pip==0.24
 - Poetry==1.8.4
 
 ## Setup environment
@@ -37,6 +38,6 @@ Once you have an API key, set it in the .env file.
 
 Change the variable `TARGET_URL` to your desired target in `extract_data_login.py`.
 
-To run the recipe:
+To run the example:
 
 `python extract_data_login.py`
