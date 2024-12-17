@@ -12,8 +12,6 @@ This example demonstrates how to use Airtop to extract data from a website using
 
 ## Setup environment
 
-Install python 3.10 and pip if you haven't already.
-
 Clone the repository and navigate to this example directory:
 
 `cd examples/extract_data/src`
