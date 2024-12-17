@@ -34,7 +34,7 @@ Once you have an API key, set it in the .env file.
 
 ## Usage
 
-Change the variable `TARGET_URL` to your desired target in summarize.py.
+Change the variable `TARGET_URL` to your desired target in `summarize.py`.
 
 To run the example:
 
