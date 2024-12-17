@@ -22,7 +22,6 @@ try:
     configuration = SessionConfigV1(
         timeout_minutes=10,
     )
-
     # Create a session
     session = client.sessions.create(configuration=configuration)
     if not session or hasattr(session, "errors") and session.errors:
