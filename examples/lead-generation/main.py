@@ -1,4 +1,6 @@
 
+from io import BytesIO
+
 from langgraph.graph import END, START, StateGraph
 from nodes.csv_generator import generate_csv_node
 from nodes.enrich_data import enrich_data_node
@@ -6,6 +8,7 @@ from nodes.info_extractor import info_extractor_node
 from nodes.outreach_message_generator import generate_outreach_message_node
 from nodes.url_list_input import url_list_input_node
 from nodes.url_validator import url_validator_node
+from PIL import Image as PILImage
 from state import State
 
 # Build the graph
@@ -31,7 +34,11 @@ builder.add_edge("generate_csv", END)
 # Compile the graph
 graph = builder.compile()
 
+# Save the image
+png_data = graph.get_graph().draw_mermaid_png()
+pil_image = PILImage.open(BytesIO(png_data))
+pil_image.save("graph.png")
+
+
 # Run the graph
 graph.invoke(State(urls=[]))
-
-
