@@ -5,7 +5,6 @@ class EnvConfig(BaseSettings):
     AIRTOP_API_KEY: str
     LANGCHAIN_API_KEY: str
     LANGCHAIN_TRACING_V2: bool = False
-    TAVILY_API_KEY: str
     OPENAI_API_KEY: str
 
     class Config:
