@@ -13,9 +13,7 @@ def validate_url(url: str) -> bool:
         bool: True if the URL is valid, False otherwise
     """
     session = airtop_client.create_session()
-    print(session)
     url_window = airtop_client.create_window(session_id=session.data.id, url=url)
-    print(url_window)
 
     model_response = airtop_client.client.windows.page_query(
         session_id=session.data.id,
@@ -25,8 +23,6 @@ def validate_url(url: str) -> bool:
             output_schema=validate_url_schema
         )
     )
-
-    print(model_response.data.model_response)
 
     if isinstance(model_response.data.model_response, str) and len(model_response.data.model_response) > 0:
         model_response_json = json.loads(model_response.data.model_response)

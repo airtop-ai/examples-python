@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 langgraph = "*"
 langsmith = "*"
-langchain-anthropic = "*"
+langchain-openai = "*"
 python-dotenv = "*"
 airtop="*"
 pydantic-settings = "*"
