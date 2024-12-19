@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field
 from typing import Optional
+
+from pydantic import BaseModel, Field
+
 
 class BaseSchema(BaseModel):
     error: Optional[str] = Field(
@@ -10,7 +12,7 @@ class BaseSchema(BaseModel):
 class ValidUrlSchema(BaseSchema):
     is_valid: bool
   
-class TherapistInfo(BaseSchema):
+class Therapist(BaseSchema):
     name: str
     email: Optional[str] = None 
     phone: Optional[str] = None
@@ -38,11 +40,11 @@ validate_url_schema = {
   "properties": {
     "is_valid": {
       "type": "boolean",
-      "description": f"Whether the webpage matches the criteria",
+      "description": "Whether the webpage matches the criteria",
     },
     "error": {
       "type": "string",
-        "description": "If you cannot fulfill the request, use this field to report the problem.",
+      "description": "If you cannot fulfill the request, use this field to report the problem.",
     },
   },
   "required": ["is_valid"]
@@ -61,6 +63,7 @@ Some of the information may not be available in the webpage, in that case just l
 For example, if the webpage does not contain any email address, you should leave the email field blank.
 
 For the personal website or detail page about the therapist, you should extract the URL of the website.
+Only extract the first 5 therapists in the list.
 
 
 If you cannot find the information, use the error field to report the problem.
@@ -77,11 +80,26 @@ extract_therapist_info_schema = {
       "items": {
         "type": "object",
         "properties": {
-          "name": {"type": "string", "description": "The name of the therapist"},
-          "email": {"type": "string", "description": "The email address of the therapist"},
-          "phone": {"type": "string", "description": "The phone number of the therapist"},
-          "website": {"type": "string", "description": "The personal website or detail page about the therapist"},
-          "source": {"type": "string", "description": "The name of the website that contains the therapist information"},
+          "name": {
+              "type": "string", 
+              "description": "The name of the therapist"
+          },
+          "email": {
+              "type": "string", 
+              "description": "The email address of the therapist"
+          },
+          "phone": {
+              "type": "string", 
+              "description": "The phone number of the therapist"
+          },
+          "website": {
+            "type": "string", 
+            "description": "The personal website or detail page about the therapist"
+          },
+          "source": {
+            "type": "string", 
+            "description": "The name of the website that contains the therapist information"
+          },
         },
         "required": ["name", "source"],
       },  
@@ -122,21 +140,25 @@ enrich_therapist_info_schema = {
         "website": {"type": "string", "description": "The personal website of the therapist"},
         "summary": {"type": "string", "description": "The summary of the therapist's information"},
         "source": {"type": "string", "description": "The name of the website that contains the therapist information"},
-        "error": {"type": "string", "description": "If you cannot fulfill the request, use this field to report the problem."},
+        "error": {
+            "type": "string", 
+            "description": "If you cannot fulfill the request, use this field to report the problem."
+        },
     },
     "required": ["name", "email", "phone", "website", "summary"]
 }
 
-def outreach_message_prompt(therapist: TherapistInfo) -> str:
+def outreach_message_prompt(therapist: Therapist) -> str:
     return f"""
-Generate a small outreach message for the followingtherapist:
+Generate a small outreach message for the following therapist:
 {therapist.name}
 
 Use the following information to generate the message:
 {therapist.summary}
 
 The message should be a small message that is 100 words or less.
-The goal of the message is to connect with the therapist to sell them an app.
+The goal of the message is to connect with the therapist to sell them an app that serves as a 
+companion for their practice.
 
 Return the message in the following JSON format:
 {{

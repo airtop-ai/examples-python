@@ -1,5 +1,6 @@
-from urllib.parse import urlparse
 import re
+from urllib.parse import urlparse
+
 
 def validate_url(url: str) -> tuple[bool, str]:
     """

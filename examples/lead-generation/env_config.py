@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+
 class EnvConfig(BaseSettings):
     AIRTOP_API_KEY: str
     LANGCHAIN_API_KEY: str

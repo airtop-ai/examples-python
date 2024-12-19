@@ -10,6 +10,9 @@ langchain-openai = "*"
 python-dotenv = "*"
 airtop="*"
 pydantic-settings = "*"
+ruff = "*"
+ipython = "*"
+pillow = "*"
 
 [dev-packages]
 
