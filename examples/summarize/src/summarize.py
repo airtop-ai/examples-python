@@ -14,6 +14,10 @@ TARGET_URL = "https://en.wikipedia.org/wiki/A.I._Artificial_Intelligence"
 EXTRACT_DATA_PROMPT = "Summarize the content of this page in one paragraph."
 # Prompts used in the TARGET_URL
 
+client = None
+session_id = None
+window = None
+
 try:
     # Initialize AirTop client
     client = Airtop(api_key=api_key)
@@ -47,4 +51,9 @@ try:
 except Exception as e:
     print(e)
 finally:
-    client.sessions.terminate(id=session.data.id)
+    # Clean up
+    if client is not None and session_id is not None:
+        if window is not None and window.data is not None and window.data.window_id is not None:
+            client.windows.close(session_id, window.data.window_id)
+        client.sessions.terminate(session_id)
+        print("Session terminated")

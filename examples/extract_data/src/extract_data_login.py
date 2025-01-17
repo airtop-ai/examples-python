@@ -59,7 +59,8 @@ EXTRACT_DATA_OUTPUT_SCHEMA = {
 async def run():
     client = None 
     session_id = None
-
+    window = None
+    
     try:
         if not AIRTOP_API_KEY:
             raise ValueError("AIRTOP_API_KEY is not set")
