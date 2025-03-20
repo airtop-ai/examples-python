@@ -80,20 +80,22 @@ def run():
 
         client = Airtop(api_key=AIRTOP_API_KEY)
 
-        profile_id = input("Enter a profileId (or press Enter to skip): ").strip()
-        if profile_id:
-            print(f"Using profileId: {profile_id}")
+        profile_name = input("Enter a profile name (or press Enter to skip): ").strip()
+        if profile_name:
+            print(f"Using profile name: {profile_name}")
         else:
-            print("No profileId provided")
-            profile_id = None
+            print("No profile name provided")
+            profile_name = None
 
-        print("Creating sessions")
+        print("Creating session")
         configuration = SessionConfigV1(
             timeout_minutes=10,
-            persist_profile=not profile_id,
-            base_profile_id=profile_id,
+            profile_name=profile_name,
         )
         session = client.sessions.create(configuration=configuration)
+
+        if profile_name:
+            client.sessions.save_profile_on_termination(session.data.id, profile_name)
 
         if not session.data.cdp_ws_url:
             raise ValueError("Unable to get cdp url")
@@ -127,7 +129,7 @@ def run():
             )
             input()
             print(
-                f"To avoid logging in again, use the profileId next time: {session.data.profile_id}"
+                f"To avoid logging in again, use this profile name next time: {profile_name}"
             )
         else:
             print(
@@ -178,6 +180,7 @@ def run():
                 prompt_content_response.data.model_response,
             )
 
+        print("Saving results...")
         insert_result(TARGET_URL, EXTRACT_DATA_PROMPT, formatted_json)
 
     except Exception as e:

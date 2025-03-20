@@ -41,6 +41,7 @@ try:
     # Get the window ID
     window_id = window.data.window_id
 
+    print(f"Summarizing {TARGET_URL} ...")
     current_content = client.windows.page_query(
         session.data.id,
         window_id,

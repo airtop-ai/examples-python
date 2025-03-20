@@ -2,13 +2,13 @@
 
 [[package]]
 name = "airtop"
-version = "0.0.24"
+version = "0.0.44"
 description = "SDK for Airtop cloud browsers"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "airtop-0.0.24-py3-none-any.whl", hash = "sha256:774b66f3ac1fe311ab4bf83f9403a162e74fda1ac95f4105aa599f048a178fe2"},
-    {file = "airtop-0.0.24.tar.gz", hash = "sha256:5c3417514e3d3146cc6db536e492e817f964f09133c158596227de7a7d8bd17b"},
+    {file = "airtop-0.0.44-py3-none-any.whl", hash = "sha256:6fd073778024344c89621ded6e464c457a9b8ff03d3b88faacc581a0f7c051db"},
+    {file = "airtop-0.0.44.tar.gz", hash = "sha256:6e1476912dda53ffbd6cfa41778a7b0a11d6ad9066652555000355026307cb94"},
 ]
 
 [package.dependencies]
@@ -16,6 +16,7 @@ httpx = ">=0.21.2"
 httpx-sse = "0.4.0"
 pydantic = ">=1.9.2"
 pydantic-core = ">=2.18.2,<3.0.0"
+pyee = "12.0.0"
 requests = "2.32.3"
 typing_extensions = ">=4.0.0"
 
@@ -405,6 +406,23 @@ files = [
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
+name = "pyee"
+version = "12.0.0"
+description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pyee-12.0.0-py3-none-any.whl", hash = "sha256:7b14b74320600049ccc7d0e0b1becd3b4bd0a03c745758225e31a59f4095c990"},
+    {file = "pyee-12.0.0.tar.gz", hash = "sha256:c480603f4aa2927d4766eb41fa82793fe60a82cbfdb8d688e0d08c55a534e145"},
+]
+
+[package.dependencies]
+typing-extensions = "*"
+
+[package.extras]
+dev = ["black", "build", "flake8", "flake8-black", "isort", "jupyter-console", "mkdocs", "mkdocs-include-markdown-plugin", "mkdocstrings[python]", "pytest", "pytest-asyncio", "pytest-trio", "sphinx", "toml", "tox", "trio", "trio", "trio-typing", "twine", "twisted", "validate-pyproject[all]"]
+
+[[package]]
 name = "python-dotenv"
 version = "1.0.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -481,4 +499,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8354f8479df608f56ea5a9a13775cc33c2f2f3f1b2a12b813f439bfd48cef983"
+content-hash = "3e6bacc47e4d1506f4007d8c5c3932122194493d881c3b0cc01af96100030f68"
