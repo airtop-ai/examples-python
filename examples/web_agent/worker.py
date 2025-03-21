@@ -80,11 +80,13 @@ def run():
 
         client = Airtop(api_key=AIRTOP_API_KEY)
 
-        profile_name = input("Enter a profile name (or press Enter to skip): ").strip()
+        profile_name = input(
+            "Enter a profile name.  If no profile exists with this name, one will be created: "
+        ).strip()
         if profile_name:
-            print(f"Using profile name: {profile_name}")
+            print(f'Profile "{profile_name}" will be used for this session')
         else:
-            print("No profile name provided")
+            print("Proceeding without a profile")
             profile_name = None
 
         print("Creating session")
@@ -116,7 +118,7 @@ def run():
             prompt=IS_LOGGED_IN_PROMPT,
             configuration=PageQueryConfig(output_schema=logged_in_schema),
         )
-        print("Response if user is logged in")
+
         parsed_response = json.loads(is_logged_in_response.data.model_response)
         if "error" in parsed_response:
             raise ValueError(parsed_response.error)
@@ -125,15 +127,16 @@ def run():
         # Prompt the user to log in if not already logged in
         if not is_user_logged_in:
             print(
-                f"Log into your Glassdoor account on the live view of your browser window.  Press `Enter` once you have logged in. Live view URL: {window_info.data.live_view_url}"
+                f"Log into your Glassdoor account on the live view of your browser window.  Press `Enter` once you have logged in.\nLive view URL: {window_info.data.live_view_url}"
             )
             input()
-            print(
-                f"To avoid logging in again, use this profile name next time: {profile_name}"
-            )
+            if profile_name:
+                print(
+                    f"Your login credentials will be saved to profile '{profile_name}' for future executions"
+                )
         else:
             print(
-                f"User is already logged in. Live view URL: {window_info.data.live_view_url}"
+                f"User is already logged in.\nLive view URL: {window_info.data.live_view_url}"
             )
 
         # Navigate to the target URL
