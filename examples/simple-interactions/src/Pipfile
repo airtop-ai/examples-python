@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-airtop = "~=0.0.26"
+airtop = "~=0.0.44"
 
 [dev-packages]
 

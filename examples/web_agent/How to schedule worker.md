@@ -1,9 +1,9 @@
 # How to schedule the worker script
 
-In case the site you're acessing requires login, we suggest you hardcode the profile_id in the worker so it runs automatically.
+In case the site you're acessing requires login, we suggest you hardcode the profile_name in the worker so it runs automatically.
 Just edit this line in worker.py
 
-`profile_id = input("Enter a profileId (or press Enter to skip): ").strip()`
+`profile_name = input("Enter a profile name.  If no profile exists with this name, one will be created: ").strip()`
 
 # Crontab (Linux, Mac)
 

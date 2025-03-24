@@ -2,13 +2,13 @@
 
 [[package]]
 name = "airtop"
-version = "0.0.26"
+version = "0.0.44"
 description = "SDK for Airtop cloud browsers"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "airtop-0.0.26-py3-none-any.whl", hash = "sha256:bfcf59d00d8eb2e0950a96312bd644a53b114e86ca14e527f0eb6f3be0079741"},
-    {file = "airtop-0.0.26.tar.gz", hash = "sha256:d5b1ffe14a9a0b929821e7003072ebc3dda67873b47d66f4fffc891c536cbe32"},
+    {file = "airtop-0.0.44-py3-none-any.whl", hash = "sha256:6fd073778024344c89621ded6e464c457a9b8ff03d3b88faacc581a0f7c051db"},
+    {file = "airtop-0.0.44.tar.gz", hash = "sha256:6e1476912dda53ffbd6cfa41778a7b0a11d6ad9066652555000355026307cb94"},
 ]
 
 [package.dependencies]
@@ -16,6 +16,7 @@ httpx = ">=0.21.2"
 httpx-sse = "0.4.0"
 pydantic = ">=1.9.2"
 pydantic-core = ">=2.18.2,<3.0.0"
+pyee = "12.0.0"
 requests = "2.32.3"
 typing_extensions = ">=4.0.0"
 
@@ -666,6 +667,23 @@ files = [
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
+name = "pyee"
+version = "12.0.0"
+description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pyee-12.0.0-py3-none-any.whl", hash = "sha256:7b14b74320600049ccc7d0e0b1becd3b4bd0a03c745758225e31a59f4095c990"},
+    {file = "pyee-12.0.0.tar.gz", hash = "sha256:c480603f4aa2927d4766eb41fa82793fe60a82cbfdb8d688e0d08c55a534e145"},
+]
+
+[package.dependencies]
+typing-extensions = "*"
+
+[package.extras]
+dev = ["black", "build", "flake8", "flake8-black", "isort", "jupyter-console", "mkdocs", "mkdocs-include-markdown-plugin", "mkdocstrings[python]", "pytest", "pytest-asyncio", "pytest-trio", "sphinx", "toml", "tox", "trio", "trio", "trio-typing", "twine", "twisted", "validate-pyproject[all]"]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -884,4 +902,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "10f997b64f081b48c7a92b619aa561fcb18ede6abc7b04e92877c1c74b456c8f"
+content-hash = "6ebc9ad8c26b470d170423ca3acc90a1428a34c94337cb22c7b89a6f33538018"
