@@ -3,7 +3,7 @@
 In case the site you're acessing requires login, we suggest you hardcode the profile_name in the worker so it runs automatically.
 Just edit this line in worker.py
 
-`profile_name = input("Enter a profile name (or press Enter to skip): ").strip()`
+`profile_name = input("Enter a profile name.  If no profile exists with this name, one will be created: ").strip()`
 
 # Crontab (Linux, Mac)
 
